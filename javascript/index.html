@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<link href='https://fonts.googleapis.com/css?family=Cutive Mono' rel='stylesheet'>
+</head>
+
+<body>
+
+<canvas id="game" width="1500" height="650" style="background-color: black;" >
+  <p>Your browser doesn't support canvas.</p>
+  </canvas>
+  <!-- <h1 id="coinnum">Number of Quests Completed: 0 </h1> -->
+  <h1 id="startscreen1" style="vertical-align: center; position: absolute; top: 0; left: 13cm; color:white; font-family: 'Cutive Mono';"></h1>
+  <h1 id="startscreen2" style="vertical-align: center; position: absolute; top: 2cm; left: 8cm; color:white; font-family: 'Cutive Mono';"></h1>
+  <h1 id="instructions" style="vertical-align: center; position: absolute; top: 14cm; left: 4cm; color:white; font-family: 'Cutive Mono';"></h1>
+  <h1 id="gameover" style="vertical-align: center; position: absolute; top: 14cm; left: 12.5cm; color:white; font-family: 'Cutive Mono';"></h1>
+
+  <span id="playerhealth" style="font-size: 36px;"></span> <br> <span id="health" style="font-size: 36px;"></span>
+
+
+
+
+
+
+
+<script type="text/javascript" src="src/edu/virginia/engine/util/ArrayList.js"></script>
+
+<script type="text/javascript" src="src/edu/virginia/engine/util/GameClock.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/util/Rectangle.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/util/Point.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/util/AffineTransform.js"></script>
+
+
+
+<script type="text/javascript" src="src/edu/virginia/engine/controller/Gamepad.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/events/EventDispatcher.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/display/Sound.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/events/Event.js"></script>
+
+<script type="text/javascript" src="src/edu/virginia/engine/display/SoundManager.js"></script>
+
+
+<script type="text/javascript" src="src/edu/virginia/engine/display/DisplayObject.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/display/DisplayObjectContainer.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/display/Game.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/Tweenstuff/TweenParam.js"></script>
+
+
+<script type="text/javascript" src="src/edu/virginia/engine/Tweenstuff/Tween.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/Tweenstuff/TweenableParam.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/Tweenstuff/TweenTransition.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/Tweenstuff/TweenJuggler.js"></script>
+
+<script type="text/javascript" src="src/edu/virginia/engine/events/TweenEvent.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/display/Sprite.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/display/AnimatedSprite.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/display/PhysicsSprite.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/events/IEventListener.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/events/CollisionManager.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/events/LevelManage.js"></script>
+
+
+
+
+
+<script type="text/javascript" src="src/edu/virginia/lab1test/StartScreen.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/WinScreen.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/GameOverScreen.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/LevelSelector.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/SansLevel.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/DeathLevel.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/BowserLevel.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/CrashmanLevel.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/ZorkLevel.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/SinistarLevel.js"></script>
+
+
+
+
+
+<script type="text/javascript" src="src/edu/virginia/engine/events/QuestManager.js"></script>
+
+<script type="text/javascript" src="src/edu/virginia/engine/events/IEventDispatcher.js"></script>
+<script type="text/javascript" src="src/edu/virginia/engine/events/TweenManager.js"></script>
+
+<script type="text/javascript" src="src/edu/virginia/engine/util/Map.js"></script>
+<script type="text/javascript" src="src/edu/virginia/lab1test/ProjLevel.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
