@@ -9,8 +9,8 @@ class BowserLevel extends DisplayObjectContainer{
   constructor(id, filename){
     super(id,filename);
     this.drawAll = new DisplayObjectContainer("drawAll", "");
-    this.bowser = new PhysicsSprite("bowser", "bowser_0.png");
-    this.mario = new PhysicsSprite("mario", "mario_0.png");
+    this.bowser = new PlayerSprite("bowser", "bowser_0.png");
+    this.mario = new PlayerSprite("mario", "mario_0.png");
     this.axe = new Sprite("axe", "axe.png");
   	this.platform1 = new Sprite("platform1", "platform.png");
   	this.platform2 = new Sprite("platform2", "platform2.png");
@@ -118,7 +118,10 @@ class BowserLevel extends DisplayObjectContainer{
     this.damaged = false;
 
     this.jumping = false;
-
+    this.bowserJumping = false;
+    this.doOnce = false
+    this.fireballonce = 0;
+    this.bowyend = 270;
   }
 
   update(pressedKeys, gamepads){
@@ -126,8 +129,17 @@ class BowserLevel extends DisplayObjectContainer{
     this.drawAll.update();
     this.tweens.nextFrame();
     this.mario.playing = false;
+    if(winCounter >= 3 && this.doOnce == false){
+      this.bowser.scaleX = 2;
+      this.bowser.scaleY = 2;
+      this.bowser.yPos = 50;
+      this.doOnce = true;
+      this.bowyend = 180;
+      this.fireballonce = 100;
+    }
     // this.bowser.playing = false;
     if(this.done == false){
+
       this.mario.tcurrent = this.gamClock.getElapsedTime();
       this.mario.tchang = this.mario.tcurrent - this.mario.tprev;
       this.mario.tprev = this.mario.tcurrent;
@@ -194,7 +206,10 @@ class BowserLevel extends DisplayObjectContainer{
             // this.bowser.playAni();
             break;
           case "-ypos":
-            this.bowser.yPos -=200;
+            if(this.bowserJumping == false){
+              this.bowser.yPos -= 5;
+              this.bowser.yvelo -=425;
+            }
             break;
         }
         this.tweens.addTween(this.bowserTween);
@@ -205,7 +220,7 @@ class BowserLevel extends DisplayObjectContainer{
         this.fireSound.playSound();
         this.fireClock.resetGameClock();
         this.fireball.visible = true;
-        this.fireballTween.animateTween("xpos", this.fireball.xPos, 0 , 2);
+        this.fireballTween.animateTween("xpos", this.fireball.xPos, 0 , 1);
         this.tweens.addTween(this.fireballTween);
         // if(this.bowser.currentFrame < 2){
         //   this.bowser.currentFrame = 2;
@@ -214,13 +229,15 @@ class BowserLevel extends DisplayObjectContainer{
         // this.bowser.playAni();
       }
 
-      if(this.bowser.yPos >= this.yend -49){
-        this.bowser.yPos = this.yend -49;
+      if(this.bowser.yPos >= this.bowyend -49){
+        this.bowser.yPos = this.bowyend -49;
         this.bowser.yvelo = 0;
         this.bowser.yacel = 0;
+        this.bowserJumping = false;
       }
       else{
         this.bowser.yvelo += 10;
+        this.bowserJumping = true;
       }
 
 
@@ -241,7 +258,7 @@ class BowserLevel extends DisplayObjectContainer{
       if(this.fireball.xPos <= 20){
         this.fireball.visible = false;
         this.fireball.xPos = this.bowser.xPos;
-        this.fireball.yPos = this.bowser.yPos;
+        this.fireball.yPos = this.bowser.yPos + this.fireballonce;
       }
 
       if(this.mario.collidesWith(this.platform1)){
@@ -300,7 +317,7 @@ class BowserLevel extends DisplayObjectContainer{
     }
 
 
-    if(this.mario.collidesWith(this.fireball) && this.damaged == false){
+    if(this.mario.collidesWith(this.fireball) && this.damaged == false && this.fireball.visible == true){
       this.damaged = true;
       this.invincibility.resetGameClock();
       this.mario.alphaVal = 0.5;

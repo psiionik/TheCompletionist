@@ -8,9 +8,10 @@ var deathLoad = false;
 class DeathLevel extends DisplayObjectContainer{
   constructor(id, filename){
     super(id, filename);
-    this.player = new PhysicsSprite("player", "death/grant/grant0.png");
+    this.player = new PlayerSprite("player", "death/grant/grant0.png");
     this.drawAll = new DisplayObjectContainer("drawall", "");
-    this.death = new PhysicsSprite("death", "death/death0.png");
+    this.death = new PlayerSprite("death", "death/death0.png");
+    this.deathAttack1 = new PhysicsSprite("attack1", "death/deathattack0.png");
     // this.background = new Sprite("background", "death/deathbackground.png");
     // this.background.setSize(1500,700);
     // this.background.xPos = 750;
@@ -104,15 +105,47 @@ class DeathLevel extends DisplayObjectContainer{
     this.left = true;
 
     this.doOnce = false;
+
+    this.attackPressed = false;
+    this.frameCount = 0;
+    this.bossAttackCounter = 0;
+
+    //Animations
+    this.deathAttack1.setSize(60,60);
+    this.deathAttack1.frames.add("death/deathattack0.png");
+    this.deathAttack1.frames.add("death/deathattack1.png");
+    this.deathAttack1.frames.add("death/deathattack2.png");
+    this.deathAttack1.frames.add("death/deathattack3.png");
+
+    this.deathAttack1.setStartIndex(0);
+    this.deathAttack1.setEndIndex(3);
+
+    this.death.frames.add("death/death0.png");
+    this.death.frames.add("death/death1.png");
+    this.death.frames.add("death/death2.png");
+    this.death.frames.add("death/death3.png");
+    this.death.frames.add("death/death4.png");
+
+    this.death.setStartIndex(0);
+    this.death.setEndIndex(4);
+
+    this.death.counterEnd = 8;
+
+
+
   }
 
   update(pressedKeys, gamepads){
     super.update();
     this.drawAll.update();
+    this.bossAttackCounter++;
+
+
 
     this.player.playing = false;
     this.platformColliding = false;
     this.attacking = false;
+    this.deathAttack1.playing = false;
     if(this.done == false){
       this.player.tcurrent = this.gamClock.getElapsedTime();
       this.player.tchang = this.player.tcurrent - this.player.tprev;
@@ -120,8 +153,10 @@ class DeathLevel extends DisplayObjectContainer{
       this.death.tcurrent = this.gamClock.getElapsedTime();
       this.death.tchang = this.death.tcurrent - this.death.tprev;
       this.death.tprev = this.death.tcurrent;
-      this.player.setImage("death/grant/grant0.png");
-      this.player.setSize(50,100);
+      this.deathAttack1.tcurrent = this.gamClock.getElapsedTime();
+      this.deathAttack1.tchang = this.deathAttack1.tcurrent - this.deathAttack1.tprev;
+      this.deathAttack1.tprev = this.deathAttack1.tcurrent;
+
       if(pressedKeys.contains(37)){
         this.player.xPos -= 8;
         this.player.scaleX = 1;
@@ -141,42 +176,42 @@ class DeathLevel extends DisplayObjectContainer{
         // this.jumpSound.playSound();
         if(this.jumping == false){
           this.player.yPos -= 12;
-          // this.mario.yvelo -=500;
+          // this.deathAttack1.yvelo -=500;
         }
-        // this.mario.setAnimation("jump", "mario");
-        // if(this.mario.currentFrame < 2){
-        //   this.mario.currentFrame = this.mario.startIndex;
+        // this.deathAttack1.setAnimation("jump", "deathAttack1");
+        // if(this.deathAttack1.currentFrame < 2){
+        //   this.deathAttack1.currentFrame = this.deathAttack1.startIndex;
         //
         // }
-        // this.mario.playAni();
+        // this.deathAttack1.playAni();
       }
       else{
         this.jumping = true;
       }
-      this.drawAll.removeChildObj(this.attackRect);
 
       if(pressedKeys.contains(90)){
-        this.attackCounter++;
-        if(this.attackCounter <15){
-          this.attacking = true;
+        this.attacking = true;
+
+        if(this.attackPressed == false){
+          this.attackPressed = true;
           this.player.setImage("death/grant/whip2.png");
-          if(this.left){
-            this.attackRect.xPos = this.player.xPos - this.player.pivX - 30;
-            this.attackRect.yPos = this.player.yPos - 20;
-          }
-          else{
-            this.attackRect.xPos = this.player.xPos + this.player.pivX + 50;
-            this.attackRect.yPos = this.player.yPos - 20;
-          }
           this.drawAll.addChild(this.attackRect);
           this.player.setSize(175,100);
         }
-        if(this.attackCounter > 30){
-          this.attackCounter = 0;
-          this.attacking = false;
-          // this.player.setImage("death/grant/grant0.png");
-          // this.player.setSize(50,100);
-        }
+      }
+      else{
+        this.drawAll.removeChildObj(this.attackRect);
+        this.player.setImage("death/grant/grant0.png");
+        this.player.setSize(50,100);
+        this.attackPressed = false;
+      }
+      if(this.left){
+        this.attackRect.xPos = this.player.xPos - this.player.pivX + 20;
+        this.attackRect.yPos = this.player.yPos - 20;
+      }
+      else{
+        this.attackRect.xPos = this.player.xPos + this.player.pivX - 20;
+        this.attackRect.yPos = this.player.yPos - 20;
       }
 
 
@@ -231,25 +266,80 @@ class DeathLevel extends DisplayObjectContainer{
         this.yend = 510;
       }
       this.bossCounter++;
-      if(this.bossCounter == 5){
-        this.bossCounter = 0;
-        var x = Math.floor(Math.random() * Math.floor(this.deathMoves.size()));
-        console.log(x);
-        switch(this.deathMoves.get(x)){
-          case "1":
-              // this.death.xvelo =0;
-              this.death.xvelo =-200;
-            break;
-          case "2":
-              // this.death.xvelo =0;
-              this.death.xvelo =200;
-            break;
-          case "3":
-              this.death.yvelo =-200;
-            break;
-          case "4":
-              this.death.yvelo =200;
-            break;
+
+      this.frameCount++;
+      if(this.frameCount < 300){
+        if(this.bossCounter >= 5){
+          this.bossCounter = 0;
+          var x = Math.floor(Math.random() * Math.floor(this.deathMoves.size()));
+          switch(this.deathMoves.get(x)){
+            case "1":
+                // this.death.xvelo =0;
+                this.death.xvelo =-200;
+              break;
+            case "2":
+                // this.death.xvelo =0;
+                this.death.xvelo =200;
+              break;
+            case "3":
+                this.death.yvelo =-200;
+              break;
+            case "4":
+                this.death.yvelo =200;
+              break;
+          }
+        }
+      }
+
+      if(this.frameCount >= 300 && this.frameCount < 420){
+        if (this.death.xPos <= this.player.xPos && this.death.yPos <= this.player.yPos){
+          this.death.xvelo = 200;
+          this.death.yvelo = 200;
+        }
+        if (this.death.xPos <= this.player.xPos && this.death.yPos >= this.player.yPos){
+          this.death.xvelo = 200;
+          this.death.yvelo = -200;
+        }
+        if (this.death.xPos >= this.player.xPos && this.death.yPos <= this.player.yPos){
+          this.death.xvelo = -200;
+          this.death.yvelo = 200;
+        }
+        if (this.death.xPos >= this.player.xPos && this.death.yPos >= this.player.yPos){
+          this.death.xvelo = -200;
+          this.death.yvelo = -200;
+        }
+      }
+      if(this.frameCount >= 480){
+        this.frameCount = 0;
+        this.death.xvelo =0;
+        this.death.yvelo = 0;
+      }
+
+      if(this.bossAttackCounter >= 60){
+        this.deathAttack1.visible = true;
+        this.drawAll.addChild(this.deathAttack1);
+        if (this.deathAttack1.xPos <= this.player.xPos && this.deathAttack1.yPos <= this.player.yPos){
+          this.deathAttack1.xvelo = 200;
+          this.deathAttack1.yvelo = 200;
+        }
+        if (this.deathAttack1.xPos <= this.player.xPos && this.deathAttack1.yPos >= this.player.yPos){
+          this.deathAttack1.xvelo = 200;
+          this.deathAttack1.yvelo = -200;
+        }
+        if (this.deathAttack1.xPos >= this.player.xPos && this.deathAttack1.yPos <= this.player.yPos){
+          this.deathAttack1.xvelo = -200;
+          this.deathAttack1.yvelo = 200;
+        }
+        if (this.deathAttack1.xPos >= this.player.xPos && this.deathAttack1.yPos >= this.player.yPos){
+          this.deathAttack1.xvelo = -200;
+          this.deathAttack1.yvelo = -200;
+        }
+      }
+      if(this.bossAttackCounter >= 180){
+        this.deathAttack1.visible = false;
+        this.bossAttackCounter = 0;
+        if(this.drawAll.listObjects.contains(this.deathAttack1)){
+          this.drawAll.removeChildObj(this.deathAttack1);
         }
       }
 
@@ -258,22 +348,31 @@ class DeathLevel extends DisplayObjectContainer{
       this.death.computeVeloY();
       this.death.computePosY();
 
-      if(this.death.xPos >= 1400 - this.death.pivX){
-        this.death.xPos = 1400 - this.death.pivX;
+      this.deathAttack1.computeVeloX();
+      this.deathAttack1.computePosX();
+      this.deathAttack1.computeVeloY();
+      this.deathAttack1.computePosY();
+
+      if(this.death.xPos >= 1500 - this.death.pivX){
+        this.death.xPos = 1500 - this.death.pivX;
       }
 
-      if(this.death.xPos <= 100 + this.death.pivX){
-        this.death.xPos = 100 + this.death.pivX;
+      if(this.death.xPos <= 0 + this.death.pivX){
+        this.death.xPos = 0 + this.death.pivX;
       }
-      if(this.death.yPos >= 450 - this.death.pivY){
-        this.death.yPos = 450 - this.death.pivY;
+      if(this.death.yPos >= 550 - this.death.pivY){
+        this.death.yPos = 550 - this.death.pivY;
       }
 
       if(this.death.yPos <= 0 + this.death.pivY){
         this.death.yPos = 0 + this.death.pivY;
       }
 
-    }
+
+
+
+
+  }
 
 
 
@@ -300,10 +399,21 @@ class DeathLevel extends DisplayObjectContainer{
       playerHealth--;
     }
 
+    if(this.player.collidesWith(this.deathAttack1) && this.damaged == false && this.attacking == false && this.deathAttack1.visible == true){
+      this.invincibility.resetGameClock();
+      this.damaged = true;
+      this.player.alphaVal = 0.5;
+      playerHealth--;
+    }
+
     if(parseInt(this.invincibility.getElapsedTime()) == 1 && this.damaged == true){
       this.damaged = false;
       this.player.alphaVal = 1;
 
+    }
+
+    if((this.attackRect.collidesWith(this.deathAttack1) || this.player.collidesWith(this.deathAttack1)) && this.attacking == true){
+      this.bossAttackCounter = 180;
     }
 
     if(winCounter >= 3 && this.doOnce == false){
@@ -314,6 +424,28 @@ class DeathLevel extends DisplayObjectContainer{
     if(pressedKeys.contains(48)){
       deathComplete = true;
       document.getElementById("health").innerHTML = "";
+    }
+
+    this.deathAttack1.counter++;
+    if(this.deathAttack1.counter >= this.deathAttack1.counterEnd){
+      this.deathAttack1.counter = 0;
+      this.deathAttack1.setImage(this.deathAttack1.frames.get(this.deathAttack1.currentFrame));
+      this.deathAttack1.currentFrame++;
+
+      if(this.deathAttack1.currentFrame > this.deathAttack1.endIndex){
+        this.deathAttack1.currentFrame = this.deathAttack1.startIndex;
+      }
+    }
+
+    this.death.counter++;
+    if(this.death.counter >= this.death.counterEnd){
+      this.death.counter = 0;
+      this.death.setImage(this.death.frames.get(this.death.currentFrame));
+      this.death.currentFrame++;
+
+      if(this.death.currentFrame > this.death.endIndex){
+        this.death.currentFrame = this.death.startIndex;
+      }
     }
   }
 

@@ -38,13 +38,18 @@ var introductionGiven = false;
 var taunt1Given = false;
 //var taunt2Given = false;
 
+var prevXDir = 1;
+var prevYDir = 1;
+
+var crash = new Audio("resources/crunch.mp3");
+
 class SinistarLevel extends DisplayObjectContainer
 {
 
 	constructor(id, filename)
 	{
 		super(id,filename);
-
+		this.doOnce = false;
 		//Player
 		this.playerShip = new PhysicsSprite("Playership", "sinistarship.png");
 		this.playerShip.setScaleX(.3);
@@ -58,8 +63,8 @@ class SinistarLevel extends DisplayObjectContainer
 		this.sinistar = new PhysicsSprite("Sinistar", "sinistarface2.png");
 		this.sinistar.setPositionX(-1500);
 		this.sinistar.setPositionY(-1500);
-		this.sinistar.setPivotX(this.sinistar.getUnscaledHeight());
-		this.sinistar.setPivotY(this.sinistar.getUnscaledWidth());
+		//this.sinistar.setPivotX(this.sinistar.getUnscaledHeight());
+		//this.sinistar.setPivotY(this.sinistar.getUnscaledWidth());
 		this.sinistarPart1 = new PhysicsSprite("Part 1", "sinistarpart1.png");
 		this.sinistarPart1.setPositionX(35);
 		this.sinistarPart1.setPositionY(-35);
@@ -185,6 +190,9 @@ class SinistarLevel extends DisplayObjectContainer
 				{
 					var bolt = new PhysicsSprite("Bolt", "bolt.png");
 					this.boltList.add(bolt);
+					bolt.setSize(20, 5);
+					bolt.setScaleX(10);
+					bolt.setScaleY(10);
 					bolt.setPositionX(this.playerShip.getPositionX());
 					bolt.setPositionY(this.playerShip.getPositionY());
 					bolt.rotateVal = (this.playerShip.rotateVal - 90);
@@ -192,6 +200,9 @@ class SinistarLevel extends DisplayObjectContainer
 					bolt.yvelo = boltSpeed * -Math.sin(Math.PI * bolt.rotateVal/180);
 					this.addChild(bolt);
 					shooting = true;
+
+					var shot = new Audio("resources/shot.mp3");
+					shot.play();
 				}
 				break;
 				case EXTRA_KEY:
@@ -212,17 +223,23 @@ class SinistarLevel extends DisplayObjectContainer
 					droppingBomb = true;
 				}
 				break;
-				default:
-				xDir +=1;
 			}
 		}
+
+		if(xDir == 0 && yDir == 0)
+		{
+			xDir = prevXDir;
+		 	yDir = prevYDir;
+		}
+		prevXDir = xDir;
+		prevYDir = yDir;
 
 		if(!pressedKeys.contains(ACTION_KEY)){shooting = false;}
 		if(!pressedKeys.contains(EXTRA_KEY)){droppingBomb = false;}
 
 		var angle = Math.atan(yDir/xDir);
 		var degreesAngle = angle/(2*Math.PI) * 360;
-		if(degreesAngle == NaN){degreesAngle = 0;}
+		if(degreesAngle == NaN){degreesAngle = 90;}
 		this.playerShip.rotateVal = degreesAngle - 90;
 
 		if(xDir < 0){this.playerShip.rotateVal += 180;}
@@ -251,7 +268,7 @@ class SinistarLevel extends DisplayObjectContainer
 			this.playerShip.setPositionY(newY);
 		}
 
-		if(this.space.getPositionX() > 3600)
+		/*if(this.space.getPositionX() > 3600)
 		{
 			this.space.setPositionX(-3600);
 			this.sinistar.posX -= 7200;
@@ -270,7 +287,7 @@ class SinistarLevel extends DisplayObjectContainer
 		{
 			this.space.setPositionY(3000);
 			this.sinistar.posY += 7200;
-		}
+		}*/
 	}
 
 
@@ -325,8 +342,10 @@ class SinistarLevel extends DisplayObjectContainer
 		{
 			playerHealth--;
 			sinistarLoss = true;
+			var boom = new Audio("resources/boom.mp3");
+			boom.play();
 		}
-
+		/*
 		if(this.sinistar.getPositionX() > 3600)
 		{
 			this.sinistar.setPositionX(-3600);
@@ -343,11 +362,11 @@ class SinistarLevel extends DisplayObjectContainer
 		{
 			this.sinistar.setPositionY(3000);
 		}
-
-		if(sinistarVelocityX > 30){sinistarVelocityX = 30;}
-		if(sinistarVelocityX < -30){sinistarVelocityX = -30;}
-		if(sinistarVelocityY > 30){sinistarVelocityY = 30;}
-		if(sinistarVelocityY < -30){sinistarVelocityY = -30;}
+		*/
+		if(sinistarVelocityX > 20){sinistarVelocityX = 20;}
+		if(sinistarVelocityX < -20){sinistarVelocityX = -20;}
+		if(sinistarVelocityY > 20){sinistarVelocityY = 20;}
+		if(sinistarVelocityY < -20){sinistarVelocityY = -20;}
 
 		if(!introductionGiven && sX > 0 && sX < 2000 && sY > 0 && sY < 800)
 		{
@@ -402,6 +421,10 @@ class SinistarLevel extends DisplayObjectContainer
 				this.damageSinistar();
 				bomb.setVisible(false);
 				this.bombList.removeAt(b);
+
+
+				var boom = new Audio("resources/boom.mp3");
+				boom.play();
 			}
 		}
 	}
@@ -430,13 +453,20 @@ class SinistarLevel extends DisplayObjectContainer
 							asteroid.setVisible(false);
 							this.asteroidList.removeAt(a);
 							this.bombCount += 1;
+
+							var boom = new Audio("resources/boom.mp3");
+							boom.play();
 						}
+
+						if(crash.ended)crash.play();
+
 					}
 				}
 				if(asteroid.collidesWith(this.sinistar))
 				{
-					sinistarForceX -= sinistarVelocityX*50;
-					sinistarForceY -= sinistarVelocityY*50;
+					sinistarForceX -= sinistarVelocityX*40;
+					sinistarForceY -= sinistarVelocityY*40;
+					if(crash.ended)crash.play();
 				}
 				if(asteroid.collidesWith(this.playerShip))
 				{
@@ -444,6 +474,7 @@ class SinistarLevel extends DisplayObjectContainer
 									+ shipVelocityX * 1.5);
 					this.space.setPositionY(this.space.getPositionY()
 									+ shipVelocityY * 1.5);
+					if(crash.ended)crash.play();
 				}
 			}
 		}
@@ -458,9 +489,11 @@ class SinistarLevel extends DisplayObjectContainer
 			var warning = new Audio("resources/BEWARE, I LIVE!.mp3");
 			warning.play();
 			warningGiven = true;
+			crash.muted = true;
+			crash.play();
 		}
 
-
+		crash.muted = false;
 		this.controls(pressedKeys);
 		this.bombMovement();
 		this.asteroidChecks();
@@ -483,7 +516,6 @@ class SinistarLevel extends DisplayObjectContainer
 			{
 				this.boltList.removeAt(b);
 			}
-			console.log(x)
 		}
 
 		var bX = 30;
@@ -494,18 +526,13 @@ class SinistarLevel extends DisplayObjectContainer
 			else{bomb.setVisible(false);}
 		}
 
-		if(this.sinistarHealth <= 0){
-			sinistarComplete = true;
-		}
-
 		sinistarForceX = 0;
 		sinistarForceY = 0;
 
-		console.log(this.boltList.size());
-		if(this.sinistarHealth <= 0){
+		if(this.sinistarHealth == 0){
+			document.getElementById("health").innerHTML = "";
 			sinistarComplete = true;
 		}
-
 
 
 		this.bombMovement();
@@ -513,6 +540,12 @@ class SinistarLevel extends DisplayObjectContainer
 
 		if(pressedKeys.contains(48)){
 			sinistarComplete = true;
+			document.getElementById("health").innerHTML = "";
+		}
+
+		if(winCounter >=3 &&this.doOnce == false){
+			this.doOnce = true;
+			this.sinistarHealth = 3;
 		}
 
 	}
@@ -523,7 +556,7 @@ class SinistarLevel extends DisplayObjectContainer
   draw(g)
   {
     super.draw(g);
-
+		document.getElementById("health").innerHTML = "Sinistar Health Left: " + this.sinistarHealth;
   }
 
 

@@ -123,6 +123,14 @@ class AnimatedSprite extends Sprite{
       this.setStartIndex(0);
       this.setEndIndex(12);
     }
+    if(sprType == "deathattack"){
+      this.setStartIndex(0);
+      this.setEndIndex(3);
+    }
+    if(sprType == "death"){
+      this.setStartIndex(0);
+      this.setEndIndex(4);
+    }
 
 
     // if(sprType == "megaman"){

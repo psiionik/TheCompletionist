@@ -16,6 +16,8 @@ class ProjLevel extends Game{
 		this.level3 = new CrashmanLevel("crashman", "");
 		this.level4 = new ZorkLevel("zork", "");
 		this.level5 = new SinistarLevel("sinistar", "");
+		this.level6 = new SansLevel("sans", "");
+
 		this.startLevel = new StartScreen("start", "");
 		this.levelSelector = new LevelSelector("levelselect", "");
 		this.winscreen = new WinScreen("winscreen", "");
@@ -29,6 +31,7 @@ class ProjLevel extends Game{
 		this.listOfGames.add(this.levelSelector)
 		this.listOfGames.add(this.winscreen);
 		this.listOfGames.add(this.gameoverscreen);
+		this.listOfGames.add(this.level6);
 		// this.ran = getRandomInt(this.listOfGames.size()-2);
     this.gameLoading.addChild(this.listOfGames.get(5));
 		this.addChild(this.gameLoading);
@@ -158,6 +161,25 @@ class ProjLevel extends Game{
 			deathComplete = false;
 		}
 
+		if(sansLoad == true){
+			this.overallTheme.stopSound();
+			this.sansTheme.playSound();
+			this.gameLoading.removeByIndex(0);
+			this.gameLoading.addChild(this.listOfGames.get(9));
+			this.listOfGames.get(9).resetAllClocks();
+			sansLoad = false;
+		}
+
+		if(sansComplete == true){
+			winCounter++;
+			this.sansTheme.stopSound();
+			this.overallTheme.loop = true;
+			this.overallTheme.playSound();
+			this.gameLoading.removeByIndex(0);
+			this.gameLoading.addChild(this.listOfGames.get(6));
+			sansComplete = false;
+		}
+
 		if(playerHealth <= 0){
 			this.overallTheme.stopSound();
 			this.bowserTheme.stopSound();
@@ -166,12 +188,11 @@ class ProjLevel extends Game{
 			this.gameLoading.addChild(this.listOfGames.get(8));
 		}
 
-		if(winCounter == 5){
+		if(winCounter == 6){
 			this.overallTheme.stopSound();
 			this.gameLoading.removeByIndex(0);
 			this.gameLoading.addChild(this.listOfGames.get(7));
 		}
-
 
 
 

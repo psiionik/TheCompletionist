@@ -1,7 +1,7 @@
 "use strict";
 
 var startComplete = false;
-var playerHealth = 3;
+var playerHealth = 5;
 var winCounter = 0;
 
 class StartScreen extends DisplayObjectContainer{

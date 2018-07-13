@@ -29,8 +29,11 @@ class TweenParam{
             }
             else{
               var percent = this.tweentrans.applyTransition(this.trans, this.t/this.endtime);
-              if(obj.xPos >= this.endvalue){
+              if((1-percent)*this.startvalue >= this.endvalue){
                 obj.xPos = (1-percent)*this.startvalue;
+              }
+              else{
+                obj.xPos = this.endvalue;
               }
             }
           }

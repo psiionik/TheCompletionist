@@ -1,25 +1,12 @@
 "use strict";
 
-var counter = 0;
-var counter2 = 0;
-var counter3 = 0;
-var counter4 = 0;
-var counter5 = 0;
-var counter6 =0;
-var counter7 =0;
-var counter8 = 0;
-var tempClock1 = new GameClock();
-
-var SansComplete = false;
+var sansComplete = false;
 var sansLoad = false;
 
 class SansLevel extends DisplayObjectContainer{
 
   constructor(id, filename){
     super(id,filename);
-    this.stage1 = true;
-    this.stage2 = false;
-    this.stage3 = false;
 
     //creating all the sprites
     this.drawAll = new DisplayObjectContainer("ok", "");
@@ -35,79 +22,57 @@ class SansLevel extends DisplayObjectContainer{
     this.sansface.xPos = 750;
     this.sansface.yPos = 130;
     this.sansface.setSize(60,60);
+
     this.blaster1 = new PhysicsSprite("blaster", "gasterblaster0.png");
-    this.blaster1.visible = false;
     this.blaster1.xPos = -50;
-    this.blasterAttack1 = new PhysicsSprite("blasterattack", "blasterattack.png");
+    this.blasterAttack1 = new AttackSprite("blasterattack", "blasterattack.png");
     // this.blaster1.yPos = 500;
     this.blasterAttack1.setSize(500,100);
     this.blasterAttack1.xPos = 300;
-    this.blasterAttack1.alphaVal = 0;
-    this.blasterAttack1.visible = false;
 
     this.blaster2 = new PhysicsSprite("blaster", "gasterblaster0.png");
-    this.blaster2.visible = false;
     this.blaster2.xPos = 1400;
-    this.blasterAttack2 = new PhysicsSprite("blasterattack", "blasterattack.png");
+    this.blasterAttack2 = new AttackSprite("blasterattack", "blasterattack.png");
     // this.blaster2.yPos = 500;
     this.blasterAttack2.setSize(500,100);
-    this.blasterAttack2.xPos = -300;
-    this.blasterAttack2.alphaVal = 0;
-    this.blasterAttack2.visible = false;
 
     this.blaster3 = new PhysicsSprite("blaster", "gasterblaster0.png");
-    this.blaster3.visible = false;
     this.blaster3.xPos = 700;
-    this.blasterAttack3 = new PhysicsSprite("blasterattack", "blasterattack.png");
+    this.blasterAttack3 = new AttackSprite("blasterattack", "blasterattack.png");
     // this.blaster2.yPos = 500;
     this.blasterAttack3.setSize(500,100);
     this.blasterAttack3.xPos = 300;
-    this.blasterAttack3.alphaVal = 0;
-    this.blasterAttack3.visible = false;
 
     this.blaster4 = new PhysicsSprite("blaster", "gasterblaster0.png");
-    this.blaster4.visible = false;
     this.blaster4.xPos = 700;
-    this.blasterAttack4 = new PhysicsSprite("blasterattack", "blasterattack.png");
+    this.blasterAttack4 = new AttackSprite("blasterattack", "blasterattack.png");
     // this.blaster2.yPos = 500;
     this.blasterAttack4.setSize(500,100);
     this.blasterAttack4.xPos = -300;
-    this.blasterAttack4.alphaVal = 0;
-    this.blasterAttack4.visible = false;
 
     // this.blaster5 = new PhysicsSprite("blaster", "gasterblaster0");
     // this.blasterAttack5 = new PhysicsSprite("blasterattack", "blasterattack.png");
     // this.blasterAttack5.setSize(500,100);
 
-    this.fightButton = new PhysicsSprite("fight", "fightbutton.png");
-    this.fightButton.visible = false;
-    this.fightButton.setSize(100,75);
-    this.fightButton.xPos = 300;
-    this.fightButton.yPos = 600;
 
-    this.attackImage = new PhysicsSprite("attack", "attack.png");
-    this.attackImage.alphaVal = 0;
 
 
     //Adding all the sprites as children
     this.drawAll.addChild(this.playerheart);
     this.drawAll.addChild(this.sanstorso);
     this.drawAll.addChild(this.sansface);
-    this.drawAll.addChild(this.blaster1);
-    this.blaster1.addChild(this.blasterAttack1);
-    this.drawAll.addChild(this.blaster2);
-    this.blaster2.addChild(this.blasterAttack2);
-    this.drawAll.addChild(this.fightButton);
-    this.sansface.addChild(this.attackImage);
-    this.drawAll.addChild(this.blaster3);
-    this.drawAll.addChild(this.blaster4);
-    this.blaster3.addChild(this.blasterAttack3);
-    this.blaster4.addChild(this.blasterAttack4);
+    // this.drawAll.addChild(this.blaster1);
+    // this.drawAll.addChild(this.blasterAttack1);
+    // this.drawAll.addChild(this.blaster2);
+    // this.drawAll.addChild(this.blasterAttack2);
+    // this.drawAll.addChild(this.blaster3);
+    // this.drawAll.addChild(this.blaster4);
+    // this.drawAll.addChild(this.blasterAttack3);
+    // this.drawAll.addChild(this.blasterAttack4);
 
 
     //Handling Tweens
     this.tweenAll = new TweenJuggler();
-    this.tweenManage = new TweenManager();
     this.blasterTween = new Tween(this.blaster1, "easeInOutQuart");
     this.tweenAll.addTween(this.blasterTween);
     this.blasterAttacktween = new Tween(this.blasterAttack1, "easeInOutExpo");
@@ -129,268 +94,425 @@ class SansLevel extends DisplayObjectContainer{
     this.tweenAll.addTween(this.blasterAttacktween4);
 
 
-
-
-
-
-    //Collisions
-    this.collisionManager = new CollisionManager();
-    this.blasterAttack1Collision = new Event("blaster1");
-    this.blasterAttack2Collision = new Event("blaster2");
-    this.blasterAttack3Collision = new Event("blaster3");
-    this.blasterAttack4Collision = new Event("blaster4");
-    this.playerheart.addEventListen(this.collisionManager, this.blasterAttack1Collision.eventType);
-    this.playerheart.addEventListen(this.collisionManager, this.blasterAttack2Collision.eventType);
-    this.playerheart.addEventListen(this.collisionManager, this.blasterAttack3Collision.eventType);
-    this.playerheart.addEventListen(this.collisionManager, this.blasterAttack4Collision.eventType);
-
-
     this.runningClock = new GameClock();
+    this.tempClock1 = new GameClock();
+
+    this.doOnce = false;
+
+    this.boneBottom = new PhysicsSprite("bonebottom", "bonebottom.png");
+    this.boneBottom.setSize(400, 75);
+
+    this.boneLeft = new PhysicsSprite("boneleft", "boneleft.png");
+    this.boneLeft.setSize(100,300);
+
+    this.boneRight = new PhysicsSprite("boneleft", "boneright.png");
+    this.boneRight.setSize(100,300);
+
+    this.boneTop = new PhysicsSprite("boneleft", "bonetop.png");
+    this.boneTop.setSize(400,75);
+
+    this.boneBottomTween = new Tween(this.boneBottom, "easeInOutQuart");
+    this.boneLeftTween = new Tween(this.boneLeft, "easeInOutQuart");
+    this.boneRightTween = new Tween(this.boneRight, "easeInOutQuart");
+    this.boneTopTween = new Tween(this.boneTop, "easeInOutQuart");
+
+    this.bones1 = new PhysicsSprite("bone1", "bigbone.png");
+    this.bones1.setSize(500, 10);
+    this.bones2 = new PhysicsSprite("bone2", "bigbone.png");
+    this.bones2.setSize(500,10);
+
+    this.boneTween1 = new Tween(this.bones1, "linear");
+    this.boneTween2 = new Tween(this.bones2, "linear");
+
+    this.sansMoves = new ArrayList();
+    this.sansMoves.add("blaster1");
+    this.sansMoves.add("blaster2");
+    this.sansMoves.add("blaster3");
+    this.sansMoves.add("bonebottom");
+    this.sansMoves.add("boneleft");
+    this.sansMoves.add("boneright");
+    this.sansMoves.add("bonetop");
+    this.sansMoves.add("bones1");
+    this.sansMoves.add("bones2");
+
+    this.gastSound = new Sound("gastSound", "resources/gastersound.mp3");
+
+    this.boneSound = new Sound("boneSound", "resources/bonesound.mp3");
   }
 
   update(pressedKeys, gamepads){
     super.update();
     this.drawAll.update();
     this.tweenAll.nextFrame();
-    // this.stage3 = true;
 
-    if(parseInt(this.runningClock.getElapsedTime()) == 1 && this.stage1 == true){
-      this.blaster1.visible = true;
-      this.blasterTween.animateTween("alpha", 0, 1, 1);
-      // this.blasterTween.animateTween("rotate", 0, 270, 1);
-      this.blasterTween.animateTween("xpos", this.blaster1.xPos, 400, 1);
-      this.blasterTween.animateTween("ypos", this.blaster1.yPos, 475, 1);
+    if(parseInt(this.tempClock1.getElapsedTime()) == 3){
+      this.tempClock1.resetGameClock();
+      var x = Math.floor(Math.random() * Math.floor(this.sansMoves.size()));
+      switch(this.sansMoves.get(x)){
+        case "blaster1":
+
+          this.blasterAttack1.xPos = 400 + 300;
+          this.blasterAttack1.yPos = 575;
+
+          this.blasterAttack2.xPos = 1100 - 300;
+          this.blasterAttack2.yPos = 375;
+
+
+          this.drawAll.addChild(this.blaster1);
+          this.drawAll.addChild(this.blaster2);
+
+          this.tweenAll.addTween(this.blasterTween);
+          this.tweenAll.addTween(this.blasterTween2);
+
+          this.blasterTween.animateTween("xpos", 0, 400, 1);
+          this.blasterTween.animateTween("ypos", 0, 575, 1);
+          this.blasterTween.animateTween("rotate", 0, 270, 1);
+
+          this.blasterTween2.animateTween("xpos", 1400, 1100, 1);
+          this.blasterTween2.animateTween("ypos", 0, 375, 1);
+          this.blasterTween2.animateTween("rotate", 0, 90, 1);
+
+          this.gastSound.playSound();
+          break;
+        case "blaster2":
+          this.blasterAttack1.xPos = 400 + 300;
+          this.blasterAttack1.yPos = 475;
+
+          this.blasterAttack2.xPos = 1100 - 300;
+          this.blasterAttack2.yPos = 475;
+
+          this.blasterAttack3.rotateVal = 90;
+          this.blasterAttack3.xPos = 750;
+          this.blasterAttack3.yPos = 450;
+
+          this.blasterAttack4.rotateVal = 90;
+          this.blasterAttack4.xPos = 750;
+          this.blasterAttack4.yPos = 450;
+
+
+          this.drawAll.addChild(this.blaster1);
+          this.drawAll.addChild(this.blaster2);
+          this.drawAll.addChild(this.blaster3);
+          this.drawAll.addChild(this.blaster4);
+
+          this.tweenAll.addTween(this.blasterTween);
+          this.tweenAll.addTween(this.blasterTween2);
+          this.tweenAll.addTween(this.blasterTween3);
+          this.tweenAll.addTween(this.blasterTween4);
+
+          this.blasterTween.animateTween("xpos", 0, 400, 1);
+          this.blasterTween.animateTween("ypos", 0, 475, 1);
+          this.blasterTween.animateTween("rotate", 0, 270, 1);
+
+          this.blasterTween2.animateTween("xpos", 1400, 1100, 1);
+          this.blasterTween2.animateTween("ypos", 0, 475, 1);
+          this.blasterTween2.animateTween("rotate", 0, 90, 1);
+
+          this.blasterTween3.animateTween("xpos", 0, 750, 1);
+          this.blasterTween3.animateTween("ypos", 0, 300, 1);
+
+          this.blasterTween4.animateTween("xpos", 1400, 750, 1);
+          this.blasterTween4.animateTween("ypos", 0, 675, 1);
+          this.blasterTween4.animateTween("rotate", 0, 180, 1);
+
+          this.gastSound.playSound();
+
+          break;
+        case "blaster3":
+          this.blasterAttack1.xPos = 750;
+          this.blasterAttack1.yPos = 475;
+          this.blasterAttack1.rotateVal = 45;
+
+          this.blasterAttack2.xPos = 750;
+          this.blasterAttack2.yPos = 475;
+          this.blasterAttack2.rotateVal = 315;
+
+
+          this.blasterAttack3.xPos = 750;
+          this.blasterAttack3.yPos = 475;
+          this.blasterAttack3.rotateVal = 315;
+
+
+          this.blasterAttack4.xPos = 750;
+          this.blasterAttack4.yPos = 475;
+          this.blasterAttack4.rotateVal = 45;
+
+
+
+          this.drawAll.addChild(this.blaster1);
+          this.drawAll.addChild(this.blaster2);
+          this.drawAll.addChild(this.blaster3);
+          this.drawAll.addChild(this.blaster4);
+
+          this.tweenAll.addTween(this.blasterTween);
+          this.tweenAll.addTween(this.blasterTween2);
+          this.tweenAll.addTween(this.blasterTween3);
+          this.tweenAll.addTween(this.blasterTween4);
+
+          this.blasterTween.animateTween("xpos", 0, 500, 1);
+          this.blasterTween.animateTween("ypos", 0, 250, 1);
+          this.blasterTween.animateTween("rotate", 0, 320, 1);
+
+          this.blasterTween2.animateTween("xpos", 1400, 1000, 1);
+          this.blasterTween2.animateTween("ypos", 0, 255, 1);
+          this.blasterTween2.animateTween("rotate", 0, 45, 1);
+
+          this.blasterTween3.animateTween("xpos", 0, 500, 1);
+          this.blasterTween3.animateTween("ypos", 0, 675, 1);
+          this.blasterTween3.animateTween("rotate", 0, 225, 1);
+
+
+          this.blasterTween4.animateTween("xpos", 1400, 1000, 1);
+          this.blasterTween4.animateTween("ypos", 0, 675, 1);
+          this.blasterTween4.animateTween("rotate", 0, 140, 1);
+
+          this.gastSound.playSound();
+
+
+          break;
+        case "bonebottom":
+          this.boneBottom.xPos = 750;
+          this.boneBottom.yPos = 590;
+          this.drawAll.addChild(this.boneBottom);
+          this.tweenAll.addTween(this.boneBottomTween);
+          this.boneBottomTween.animateTween("yscale", 0, 1, 1);
+          this.boneSound.playSound();
+          break;
+        case "boneleft":
+          this.boneLeft.xPos = 600;
+          this.boneLeft.yPos = 475;
+          this.drawAll.addChild(this.boneLeft);
+          this.tweenAll.addTween(this.boneLeftTween);
+          this.boneLeftTween.animateTween("xscale", 0, 1, 1);
+          this.boneSound.playSound();
+
+          break;
+        case "boneright":
+
+          this.boneRight.xPos = 900;
+          this.boneRight.yPos = 475;
+          this.drawAll.addChild(this.boneRight);
+          this.tweenAll.addTween(this.boneRightTween);
+          this.boneRightTween.animateTween("xscale", 0, 1, 1);
+          this.boneSound.playSound();
+
+          break;
+        case "bonetop":
+          this.boneTop.xPos = 750;
+          this.boneTop.yPos = 360;
+          this.drawAll.addChild(this.boneTop);
+          this.tweenAll.addTween(this.boneTopTween);
+          this.boneTopTween.animateTween("yscale", 0, 1, 1);
+          this.boneSound.playSound();
+          break;
+        case "bones1":
+          this.bones1.xPos = 550;
+          this.bones1.yPos = 300;
+          this.bones2.xPos = 950;
+          this.bones2.yPos = 675;
+          this.bones1.setSize(500, 10);
+          this.bones2.setSize(500,10);
+
+          this.drawAll.addChild(this.bones1);
+          this.drawAll.addChild(this.bones2);
+          this.tweenAll.addTween(this.boneTween1);
+          this.tweenAll.addTween(this.boneTween2);
+
+          this.boneTween1.animateTween("ypos", 300, 675, 3);
+          this.boneTween2.animateTween("ypos", 675, 300, 3);
+          this.boneSound.playSound();
+          break;
+        case "bones2":
+
+          this.bones1.xPos = 450;
+          this.bones1.yPos = 375;
+          this.bones2.xPos = 1050;
+          this.bones2.yPos = 575;
+          this.bones1.setSize(225, 10);
+          this.bones2.setSize(225,10);
+          this.bones1.rotateVal = 90;
+          this.bones2.rotateVal = 90;
+
+          this.drawAll.addChild(this.bones1);
+          this.drawAll.addChild(this.bones2);
+          this.tweenAll.addTween(this.boneTween1);
+          this.tweenAll.addTween(this.boneTween2);
+
+          this.boneTween1.animateTween("xpos",450, 1050, 3);
+          this.boneTween2.animateTween("xpos", 1050, 450, 3);
+          this.boneSound.playSound();
+          break;
+      }
+
     }
-    if (this.blasterTween.isComplete() && counter == 0){
-      counter++;
-      this.blasterAttack1.visible = true;
-      this.blasterAttacktween.animateTween("alpha", 0, 1, .5);
+
+    if(parseInt(this.tempClock1.getElapsedTime()) == 1){
+      if(this.drawAll.listObjects.contains(this.blaster1)){
+        this.drawAll.removeChildObj(this.blaster1);
+        this.drawAll.addChild(this.blasterAttack1);
+      }
+      if(this.drawAll.listObjects.contains(this.blaster2)){
+        this.drawAll.removeChildObj(this.blaster2);
+        this.drawAll.addChild(this.blasterAttack2);
+      }
+
+      if(this.drawAll.listObjects.contains(this.blaster3)){
+        this.drawAll.removeChildObj(this.blaster3);
+        this.drawAll.addChild(this.blasterAttack3);
+      }
+      if(this.drawAll.listObjects.contains(this.blaster4)){
+        this.drawAll.removeChildObj(this.blaster4);
+        this.drawAll.addChild(this.blasterAttack4);
+      }
 
 
     }
-    if(this.blasterAttacktween.isComplete() && counter2 == 0){
-      counter2++;
-      this.blasterAttack1.visible = false;
-      this.blaster1.visible = false;
-    }
 
-    if(parseInt(this.runningClock.getElapsedTime()) == 3 && this.stage1 == true){
-      this.blaster2.visible = true;
-      this.blasterTween2.animateTween("alpha", 0, 1, 1);
-      // this.blasterTween.animateTween("rotate", 0, 270, 1);
-      this.blasterTween2.animateTween("xpos", this.blaster2.xPos, 1100, 1);
-      this.blasterTween2.animateTween("ypos", this.blaster2.yPos, 475, 1);
-    }
+    if(parseInt(this.tempClock1.getElapsedTime()) == 2){
+      if(this.drawAll.listObjects.contains(this.blasterAttack1)){
+        this.drawAll.removeChildObj(this.blasterAttack1);
+      }
+      if(this.drawAll.listObjects.contains(this.blasterAttack2)){
+        this.drawAll.removeChildObj(this.blasterAttack2);
+      }
+      if(this.drawAll.listObjects.contains(this.blasterAttack3)){
+        this.drawAll.removeChildObj(this.blasterAttack3);
+      }
+      if(this.drawAll.listObjects.contains(this.blasterAttack4)){
+        this.drawAll.removeChildObj(this.blasterAttack4);
+      }
 
-    if (this.blasterTween2.isComplete() && counter3 == 0){
-      counter3++;
-      this.blasterAttack2.visible = true;
-      this.blasterAttacktween2.animateTween("alpha", 0, 1, .5);
+      if(this.drawAll.listObjects.contains(this.boneBottom)){
+        this.drawAll.removeChildObj(this.boneBottom);
+      }
 
+      if(this.drawAll.listObjects.contains(this.boneLeft)){
+        this.drawAll.removeChildObj(this.boneLeft);
+      }
 
-    }
-    if(this.blasterAttacktween2.isComplete() && counter4 == 0){
-      counter4++;
-      this.blasterAttack2.visible = false;
-      this.blaster2.visible = false;
-    }
+      if(this.drawAll.listObjects.contains(this.boneRight)){
+        this.drawAll.removeChildObj(this.boneRight);
+      }
 
-    if(parseInt(this.runningClock.getElapsedTime()) == 7 && this.stage1 == true){
-      this.fightButton.visible = true;
-
-    }
-
-
-    if(pressedKeys.contains(90) && this.fightButton.visible == true && this.stage1 == true){
-      this.attackImage.alphaVal = 1;
-      this.fightButton.visible = false;
-      tempClock1.resetGameClock();
-      this.stage1 = false;
-      this.stage2 = true;
-      this.runningClock.resetGameClock();
-    }
-    if(parseInt(tempClock1.getElapsedTime()) == 1){
-      this.attackImage.alphaVal = 0;
-    }
-
-    if(parseInt(this.runningClock.getElapsedTime()) == 2 && this.stage2 == true){
-      this.blaster3.visible = true;
-      this.blasterTween3.animateTween("alpha", 0, 1, 1);
-      // this.blasterTween.animateTween("rotate", 0, 270, 1);
-      this.blasterTween3.animateTween("xpos", this.blaster3.xPos, 425, 1);
-      this.blasterTween3.animateTween("ypos", this.blaster3.yPos, 575, 1);
-    }
-    if (this.blasterTween3.isComplete() && counter5 == 0){
-      counter5++;
-      this.blasterAttack3.visible = true;
-      this.blasterAttacktween3.animateTween("alpha", 0, 1, .5);
+      if(this.drawAll.listObjects.contains(this.boneTop)){
+        this.drawAll.removeChildObj(this.boneTop);
+      }
 
 
     }
-    if(this.blasterAttacktween3.isComplete() && counter6 == 0){
-      counter6++;
-      this.blasterAttack3.visible = false;
-      this.blaster3.visible = false;
-    }
 
-    if(parseInt(this.runningClock.getElapsedTime()) == 2 && this.stage2 == true){
-      this.blaster4.visible = true;
-      this.blasterTween4.animateTween("alpha", 0, 1, 1);
-      // this.blasterTween.animateTween("rotate", 0, 270, 1);
-      this.blasterTween4.animateTween("xpos", this.blaster4.xPos, 1100, 1);
-      this.blasterTween4.animateTween("ypos", this.blaster4.yPos, 400, 1);
-    }
-    if (this.blasterTween4.isComplete() && counter7 == 0){
-      counter7++;
-      this.blasterAttack4.visible = true;
-      this.blasterAttacktween4.animateTween("alpha", 0, 1, .5);
-
-
-    }
-    if(this.blasterAttacktween4.isComplete() && counter8 == 0){
-      counter8++;
-      this.blasterAttack4.visible = false;
-      this.blaster4.visible = false;
-    }
-
-    if(parseInt(this.runningClock.getElapsedTime()) == 7 && this.stage2 == true){
-      this.fightButton.visible = true;
-
+    if(parseInt(this.tempClock1.getElapsedTime()) == 3){
+      if(this.drawAll.listObjects.contains(this.bones1)){
+        this.drawAll.removeChildObj(this.bones1);
+      }
+      if(this.drawAll.listObjects.contains(this.bones2)){
+        this.drawAll.removeChildObj(this.bones2);
+      }
     }
 
 
-    if(pressedKeys.contains(90) && this.fightButton.visible == true && this.stage2 == true){
-      this.attackImage.alphaVal = 1;
-      this.fightButton.visible = false;
-      tempClock1.resetGameClock();
-      this.stage2 = false;
-      this.stage3 = true;
-      this.drawAll.removeChildObj(this.blaster1);
-      this.drawAll.removeChildObj(this.blaster2);
-      this.drawAll.removeChildObj(this.blaster3);
-      this.drawAll.removeChildObj(this.blaster4);
-      this.drawAll.removeChildObj(this.blasterAttack1);
-      this.drawAll.removeChildObj(this.blasterAttack2);
-      this.drawAll.removeChildObj(this.blasterAttack3);
-      this.drawAll.removeChildObj(this.blasterAttack4);
-      this.runningClock.resetGameClock();
-    }
-    if(parseInt(tempClock1.getElapsedTime()) == 1){
-      this.attackImage.alphaVal = 0;
-    }
-    if(this.stage3 == true){
-      SansComplete = true;
-    }
 
-    if(pressedKeys.contains(48)){
-      SansComplete = true;
-    }
-    // if(parseInt(this.runningClock.getElapsedTime()) == 2 && this.stage3 == true){
-    //   this.drawAll.addChild(this.blaster5);
-    //   this.blaster5.addChild(this.blasterAttack5);
-    //   this.blaster5.visible = true;
-    //   this.blaster5.xPos = -50;
-    //   this.blaster5.yPos = -50;
-    //   this.blasterTween5 = new Tween(this.blaster5, "easeInOutQuart");
-    //   this.blasterTween.animateTween("alpha", 0, 1, 1);
-    //   // this.blasterTween.animateTween("rotate", 0, 270, 1);
-    //   this.blasterTween.animateTween("xpos", this.blaster5.xPos, 400, 1);
-    //   this.blasterTween.animateTween("ypos", this.blaster5.yPos, 475, 1);
-    // }
-    // if (this.blasterTween.isComplete() && this.stage3== true){
-    //   this.blasterAttacktween5 = new Tween(this.blasterAttack5, "easeInOutExpo");
-    //   this.blaster5.addChild(this.blasterAttack5);
-    //   this.blasterAttacktween.animateTween("alpha", 0, 1, .5);
-    // }
-    // if(this.blasterAttacktween3.isComplete() && this.stage3 == true){
-    //   this.drawAll.removeChildObj(this.blaster5);
-    //
-    // }
-    //
-    // if(parseInt(this.runningClock.getElapsedTime()) == 2 && this.stage3 == true){
-    //   this.blaster4.visible = true;
-    //   this.blasterTween4.animateTween("alpha", 0, 1, 1);
-    //   // this.blasterTween.animateTween("rotate", 0, 270, 1);
-    //   this.blasterTween4.animateTween("xpos", this.blaster4.xPos, 1100, 1);
-    //   this.blasterTween4.animateTween("ypos", this.blaster4.yPos, 400, 1);
-    // }
-    // if (this.blasterTween4.isComplete() && counter7 == 0){
-    //   counter7++;
-    //   this.blasterAttack4.visible = true;
-    //   this.blasterAttacktween4.animateTween("alpha", 0, 1, .5);
-    //
-    //
-    // }
-    // if(this.blasterAttacktween4.isComplete() && counter8 == 0){
-    //   counter8++;
-    //   this.blasterAttack4.visible = false;
-    //   this.blaster4.visible = false;
-    // }
-    //
-    // if(parseInt(this.runningClock.getElapsedTime()) == 7 && this.stage3 == true){
-    //   this.fightButton.visible = true;
-    //
-    // }
-    //
-    //
-    // if(pressedKeys.contains(90) && this.fightButton.visible == true && this.stage3 == true){
-    //   this.attackImage.alphaVal = 1;
-    //   this.fightButton.visible = false;
-    //   tempClock1.resetGameClock();
-    //   this.stage3 = false;
-    //   this.stage4 = true;
-    //   this.runningClock.resetGameClock();
-    // }
-    // if(parseInt(tempClock1.getElapsedTime()) == 1){
-    //   this.attackImage.alphaVal = 0;
-    // }
 
-    // console.log(this.tweenAll.listOfTweens)
+
     if(pressedKeys.contains(37)){
       if(this.playerheart.xPos >this.border.x + this.playerheart.pivX){
-        this.playerheart.xPos -= 3;
+        this.playerheart.xPos -= 5;
       }
     }
 
     if(pressedKeys.contains(39)){
       if(this.playerheart.xPos <this.border.x + this.border.wid - this.playerheart.pivX){
-        this.playerheart.xPos += 3;
+        this.playerheart.xPos += 5;
       }
     }
 
     if(pressedKeys.contains(38)){
       if(this.playerheart.yPos >this.border.y + this.playerheart.pivY){
-        this.playerheart.yPos -= 3;
+        this.playerheart.yPos -= 5;
       }
     }
 
     if(pressedKeys.contains(40)){
       if(this.playerheart.yPos <this.border.y+ this.border.hei - this.playerheart.pivY){
-        this.playerheart.yPos += 3;
+        this.playerheart.yPos += 5;
       }
     }
 
 
 
     //All the collisions handled here
-    if(this.playerheart.collidesWith(this.blasterAttack1) && this.blasterAttack1.visible == true){
-      this.playerheart.dispatchEven(this.blasterAttack1Collision, this.blasterAttack1);
+    if(this.drawAll.listObjects.contains(this.blasterAttack1)){
+      if(this.playerheart.collidesWith(this.blasterAttack1)){
+        playerHealth--;
+      }
+    }
+    if(this.drawAll.listObjects.contains(this.blasterAttack2)){
+      if(this.playerheart.collidesWith(this.blasterAttack2)){
+        playerHealth--;
+      }
+    }
+    if(this.drawAll.listObjects.contains(this.blasterAttack3)){
+      if(this.playerheart.collidesWith(this.blasterAttack3)){
+        playerHealth--;
+      }
+    }
+    if(this.drawAll.listObjects.contains(this.blasterAttack4)){
+      if(this.playerheart.collidesWith(this.blasterAttack4)){
+        playerHealth--;
+      }
     }
 
-    if(this.playerheart.collidesWith(this.blasterAttack2) && this.blasterAttack2.visible == true){
-      this.playerheart.dispatchEven(this.blasterAttack2Collision, this.blasterAttack2);
+    if(this.drawAll.listObjects.contains(this.boneBottom)){
+      if(this.playerheart.collidesWith(this.boneBottom)){
+        playerHealth--;
+      }
     }
 
-    if(this.playerheart.collidesWith(this.blasterAttack3) && this.blasterAttack3.visible == true){
-      this.playerheart.dispatchEven(this.blasterAttack3Collision, this.blasterAttack3);
+    if(this.drawAll.listObjects.contains(this.boneLeft)){
+      if(this.playerheart.collidesWith(this.boneLeft)){
+        playerHealth--;
+      }
     }
 
-    if(this.playerheart.collidesWith(this.blasterAttack4) && this.blasterAttack4.visible == true){
-      this.playerheart.dispatchEven(this.blasterAttack4Collision, this.blasterAttack4);
+    if(this.drawAll.listObjects.contains(this.boneRight)){
+      if(this.playerheart.collidesWith(this.boneRight)){
+        playerHealth--;
+      }
     }
 
+    if(this.drawAll.listObjects.contains(this.boneTop)){
+      if(this.playerheart.collidesWith(this.boneTop)){
+        playerHealth--;
+      }
+    }
 
+    if(this.drawAll.listObjects.contains(this.bones1)){
+      if(this.playerheart.collidesWith(this.bones1)){
+        playerHealth--;
+      }
+    }
 
+    if(this.drawAll.listObjects.contains(this.bones2)){
+      if(this.playerheart.collidesWith(this.bones2)){
+        playerHealth--;
+      }
+    }
+    if(parseInt(this.runningClock.getElapsedTime()) == 24 && winCounter < 3 && this.doOnce == false){
+      this.doOnce = true;
+      sansComplete = true;
+      winCounter++;
+    }
+
+    if(parseInt(this.runningClock.getElapsedTime()) == 24 && winCounter >= 3 && this.doOnce == false){
+      this.doOnce = true;
+      sansComplete = true;
+    }
+
+    if(pressedKeys.contains(48) && this.doOnce == false){
+      this.doOnce = true;
+      sansComplete = true;
+      console.log("here");
+    }
 
 
   }
@@ -406,6 +528,11 @@ class SansLevel extends DisplayObjectContainer{
     g.clearRect(this.border.x, this.border.y, this.border.wid, this.border.hei);
     this.drawAll.draw(g)
 
+  }
+
+  resetAllClocks(){
+    this.runningClock.resetGameClock();
+    this.tempClock1.resetGameClock();
   }
 
 
